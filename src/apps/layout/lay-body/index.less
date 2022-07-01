@@ -1,0 +1,24 @@
+//整体布局样式覆盖
+@media (max-width: 767px) {
+  .alain-default__content {
+    transform: none !important;
+  }
+}
+
+.alain-default__content {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+  //无页脚
+  height: calc(100vh - 50px);
+  overflow: hidden;
+}
+
+.alain-default__fixed .alain-default__content {
+  margin-top: 48px !important;
+}
+
+#default_content_warp {
+  height: 100%;
+  overflow-y: auto;
+}

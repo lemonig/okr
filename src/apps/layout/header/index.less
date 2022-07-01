@@ -1,0 +1,137 @@
+a {
+  text-decoration: none;
+}
+.page-title {
+  display: flex;
+  // justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  background-color: #fff;
+  min-width: 650px;
+  padding: 0 20px;
+  font-size: 16px;
+  box-shadow: 0 2px 16px 0 rgb(31 35 41 / 5%);
+}
+.title {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  cursor: pointer;
+  .icon {
+    width: 25px;
+    height: 25px;
+    background-color: #215e21;
+    margin-right: 8px;
+  }
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 0 12px;
+  .tab-item {
+    color: #2b2f36;
+    font-size: 16px;
+    line-height: 24px;
+    padding: 0 16px;
+    cursor: pointer;
+  }
+  .active {
+    color: #3370ff;
+    font-weight: 600;
+  }
+}
+.head-right {
+  min-width: 500px;
+  .tab-item {
+    color: #fff;
+    // box-sizing: border-box;
+    padding: 0 8px;
+  }
+}
+
+.head-ul {
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.head-li-ul {
+  background-color: #fff;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+  position: absolute;
+  left: 0;
+  top: 50px;
+  height: 0;
+  overflow: hidden;
+  width: 100%;
+  .li-inner {
+    color: black;
+    float: none;
+    /*过渡代码*/
+    transition: all 0.3s;
+    background: #ffff;
+    opacity: 0;
+  }
+}
+.li-outer:hover {
+  .li-inner {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+.li-outer {
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.li-outer:hover {
+  .tab-item {
+    background-color: #07357b;
+  }
+  .head-li-ul {
+    overflow: visible;
+  }
+}
+
+.head-li-ul li:nth-of-type(1n) {
+  transform: translate3d(100%, 0, 0);
+}
+.head-li-ul li:nth-of-type(2n) {
+  transform: translate3d(-100%, 0, 0);
+}
+.head-li-ul li {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.head-li-ul li:hover {
+  background-color: #eee;
+}
+
+.head-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .block {
+    display: flex;
+    margin-right: 8px;
+  }
+}
+
+// .router-active {
+//   background-color: #07357b;
+//   color: #eee;
+// }
+
+// .active{
+//   background-color: #07357b;
+//   color: #eee;
+// }
