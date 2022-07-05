@@ -11,7 +11,19 @@ import { treeActions } from "../../../store/actions/tree-action";
 function Login() {
   let navigate = useNavigate();
   const [isCodeLogin, setIsCodeLogin] = useState(true);
-  useEffect(() => {}, []);
+  useEffect(() => {
+    ssoLogin();
+  }, []);
+
+  const ssoLogin = async () => {
+    let { data } = await _post("api/sso/getSsoAuthUrl", {
+      clientLoginUrl: `${window.location.origin}/blank`,
+    });
+    if (data.isLogin) {
+    } else {
+      window.location.href = data.serverAuthUrl;
+    }
+  };
 
   const onFinish = (values) => {
     _post("api/login", values)

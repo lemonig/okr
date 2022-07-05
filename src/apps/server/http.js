@@ -27,9 +27,10 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
+    console.log(response);
     store.dispatch(actions.shiftLoading());
     if (response.data && response.status === 200) {
-      if (response.data.error == "UNAUTHENTICATED") {
+      if (response.data.code === 401) {
         // window.history.pushState('', null, '/login')
         window.location.href = "./login";
       }
@@ -40,6 +41,7 @@ axios.interceptors.response.use(
   },
 
   (error) => {
+    console.log(error);
     store.dispatch(actions.shiftLoading());
     if (error.response.status) {
       switch (error.response.status) {
@@ -64,6 +66,17 @@ axios.interceptors.response.use(
     }
   }
 );
+
+const ssoLogin = () => {
+  _post("api/sso/getSsoAuthUrl", {
+    clientLoginUrl: `${window.location.origin}/#/passport/login`,
+  }).subscribe((res) => {
+    if (res.data.isLogin) {
+    } else {
+      window.location.href = res.data.serverAuthUrl;
+    }
+  });
+};
 
 /**
  * get

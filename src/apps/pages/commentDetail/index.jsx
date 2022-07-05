@@ -643,9 +643,6 @@ const CommentDetail = () => {
                                             onConfirm={() =>
                                               progressConfirm(jtem)
                                             }
-                                            onVisibleChange={() =>
-                                              console.log("visible change")
-                                            }
                                             okText="确定"
                                             cancelText="取消"
                                           >
