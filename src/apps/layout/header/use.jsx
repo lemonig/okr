@@ -48,9 +48,9 @@ const User = () => {
   };
 
   const loginOut = async () => {
+    await _post("api/sso/logout");
     localStorage.clear();
     navigate("/login");
-    await _post("api/sso/logout");
   };
 
   const menu = (

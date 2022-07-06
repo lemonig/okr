@@ -42,13 +42,13 @@ module.exports = {
       },
     },
   ],
-  webpack: {
-    plugins: [
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          compress: {},
-        },
-      }),
-    ],
-  },
+  // webpack: {
+  //   plugins: [
+  //     new UglifyJsPlugin({
+  //       uglifyOptions: {
+  //         compress: {},
+  //       },
+  //     }),
+  //   ],
+  // },
 };
