@@ -42,13 +42,44 @@ module.exports = {
       },
     },
   ],
-  // webpack: {
-  //   plugins: [
-  //     new UglifyJsPlugin({
-  //       uglifyOptions: {
-  //         compress: {},
-  //       },
-  //     }),
-  //   ],
-  // },
+  webpack: {
+    configure: (webpackConfig, { env, paths }) => {
+      if (isPro(env)) {
+        webpackConfig.mode = "production";
+        webpackConfig.devtool = "source-map";
+        webpackConfig.plugins.push(
+          new UglifyJsPlugin({
+            uglifyOptions: {
+              compress: {},
+            },
+          })
+          // webpackConfig.plugins.push(
+          //   new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/)
+          // )
+        );
+        webpackConfig.optimization = {
+          flagIncludedChunks: true,
+          usedExports: true,
+          mergeDuplicateChunks: true,
+          concatenateModules: true,
+          minimize: true,
+          minimizer: [
+            //webpack v5 自带最新的
+            new TerserPlugin({
+              parallel: true, // 可省略，默认开启并行
+              terserOptions: {
+                toplevel: true, // 最高级别，删除无用代码
+                ie8: true,
+                safari10: true,
+              },
+            }),
+          ],
+        };
+      }
+
+      webpackConfig.externals = {};
+      console.log("环境：", env, paths);
+      return webpackConfig;
+    },
+  },
 };

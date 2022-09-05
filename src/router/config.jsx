@@ -1,4 +1,6 @@
 import * as React from "react";
+import Notification from "../apps/pages/notification";
+
 const Login = React.lazy(() => import("../apps/pages/login"));
 const BodyLayout = React.lazy(() => import("../apps/layout/lay-body"));
 const Home = React.lazy(() => import("../apps/pages/home"));
@@ -8,6 +10,7 @@ const LoginToHome = React.lazy(() => import("../apps/pages/loginToHome"));
 const CommentList = React.lazy(() => import("../apps/pages/commentList"));
 const CommentDetail = React.lazy(() => import("../apps/pages/commentDetail"));
 const Matrix = React.lazy(() => import("../apps/pages/matrix"));
+// const Notification = React.lazy(() => import("../apps/pages/notification"));
 
 // import BodyLayout from '../apps/layout/lay-body';
 // import Home from '../apps/pages/home';
@@ -81,6 +84,10 @@ const config = [
             <Matrix />,
           </React.Suspense>
         ),
+      },
+      {
+        path: "notification",
+        element: <Notification />,
       },
       {
         path: "commentDetail",

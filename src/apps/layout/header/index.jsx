@@ -130,6 +130,10 @@ const Header = ({ message }) => {
     setNowPage("matrix");
     navigate("/matrix");
   };
+  const gotoNotice = () => {
+    setNowPage("notification");
+    navigate("/notification");
+  };
 
   return (
     <>
@@ -153,6 +157,12 @@ const Header = ({ message }) => {
             onClick={gotoMatrix}
           >
             联结矩阵
+          </div>
+          <div
+            className={`tab-item ${nowPage === "notification" ? "active" : ""}`}
+            onClick={gotoNotice}
+          >
+            通知公告
           </div>
         </div>
 
