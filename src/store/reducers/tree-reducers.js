@@ -1,24 +1,20 @@
 const initState = {
-  id: null
-}
+  id: null,
+  name: "",
+};
 
 function treeReducer(state = initState, action) {
-  // console.log(state);
   switch (action.type) {
-    case 'SELECT_MAN':
+    case "SELECT_MAN":
       return {
         ...state,
-        id: action.id
-      }
+        id: action.id,
+        name: action.name,
+      };
 
-      default:
-        return state
+    default:
+      return state;
   }
-
 }
 
-
-
-
-
-export default treeReducer
+export default treeReducer;

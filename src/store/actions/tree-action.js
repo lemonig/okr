@@ -1,11 +1,10 @@
-export const SELECT_MAN = 'SELECT_MAN'
-
+export const SELECT_MAN = "SELECT_MAN";
 
 export const treeActions = {
-  selectPeople: (id) => {
+  selectPeople: (tree) => {
     return {
       type: SELECT_MAN,
-      id: id
-    }
-  }
-}
+      ...tree,
+    };
+  },
+};

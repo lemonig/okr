@@ -26,6 +26,7 @@ import {
   Image,
   Rate,
   Tooltip,
+  Select,
 } from "antd";
 import ListTree from "../../shared/listTree";
 import "./index.less";
@@ -38,6 +39,7 @@ import {
   MinusSquareOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { _post, _get, _download } from "../../server/http";
 import moment from "moment";
 import MyCmment from "./MyCmment";
@@ -57,10 +59,12 @@ const { confirm } = Modal;
 const myself = JSON.parse(localStorage.getItem("user"));
 console.log(myself);
 let TreeListRef = React.createRef();
+let nowYear = moment().get("year");
+console.log(nowYear);
 const Home = ({ tree }) => {
+  let navigate = useNavigate();
   const [objective, setObjective] = useState(null); //objective
   const [formStatus, setFormStatus] = useState("add"); // 编辑还是添加  add edit
-  const [people, setPeople] = useState({}); //选中的人
 
   // object目标弹窗
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -91,25 +95,31 @@ const Home = ({ tree }) => {
   // console.log(location);
   // 展开折叠
   const [collapse, setCollapse] = useState([]);
-  // console.log('home=----------', tree);
+  console.log("home=----------", tree);
   // 6.23加入打分操作
   const [scoreVis, setScoreVis] = useState(false); // 打分弹窗
   const [scoreForm] = Form.useForm(); //打分表单
   const [tooltipScore, setTooltipScore] = useState("1");
+  // 当年年份
+  const [year, setYear] = useState(moment().get("year"));
+  // const [season, setSeason] = useState("");
+  const [resultScore, setResultScore] = useState({}); //打分数据
+  const [seasonList, setSeasonList] = useState([]);
 
   useEffect(() => {
     if (tree.id) {
       selectMan(tree.id);
-    } else {
-      let user = JSON.parse(localStorage.getItem("user"));
-      selectMan(user.userId);
     }
+    // else {
+    //   let user = JSON.parse(localStorage.getItem("user"));
+    //   selectMan(user.userId);
+    // }
     msgConut();
-  }, [tree.id]);
+  }, [tree.id, year]);
 
   // 获取页面数据
   const getPageData = () => {
-    _post(`api/objective/list/${people.id}/user`).then((res) => {
+    _post(`api/objective/list/${tree.id}/dept?year=${year}`).then((res) => {
       setObjective(res.data);
     });
   };
@@ -125,20 +135,19 @@ const Home = ({ tree }) => {
   const selectMan = (id) => {
     // 获取数据
 
-    _post(`api/objective/list/${id}/user`).then((res) => {
+    _post(`api/objective/list/${id}/dept?year=${year}`).then((res) => {
       // 3.17处理关注的人O 显示颜色变换
-      for (let i of res.data.objectiveVOList) {
-        for (let j of i.keyResultList) {
-          for (let k of j.followerList) {
-            if (k.id == myself.userId) {
-              i.myFavirite = true;
-            }
-          }
-        }
-      }
+      // for (let i of res.data.objectiveVOList) {
+      //   for (let j of i.keyResultList) {
+      //     for (let k of j.followerList) {
+      //       if (k.id == myself.userId) {
+      //         i.myFavirite = true;
+      //       }
+      //     }
+      //   }
+      // }
       setObjective(res.data);
-      setPeople(res.data.user);
-      getCommentList(res.data.user.id);
+      // getCommentList(res.data.user.id);
     });
     setLoading(false);
     setCollapse([]);
@@ -173,6 +182,7 @@ const Home = ({ tree }) => {
       .validateFields()
       .then((values) => {
         // objForm.resetFields();
+        values.deptId = tree.id;
         if (objAddEdit == "添加") {
           _post(`api/objective/add`, values).then((res) => {
             if (res.success) {
@@ -214,6 +224,7 @@ const Home = ({ tree }) => {
       objForm.setFieldsValue({
         content: res.data.content,
         weight: res.data.weight,
+        dataYear: res.data.dataYear,
       });
     });
   };
@@ -387,9 +398,50 @@ const Home = ({ tree }) => {
           );
         } else {
           setKrEdit(obj);
-          scoreForm.setFieldsValue({
-            score: res.data.keyResultScore.score,
-            scoreDescription: res.data.keyResultScore.scoreDescription,
+          //单季度或多季度
+          let { targetSeason, isSingleSeason, keyResultScoreList } = res.data;
+          if (res.data.isSingleSeason) {
+            setSeasonList([
+              {
+                value: targetSeason,
+                label: `第${targetSeason}季度`,
+              },
+            ]);
+          } else {
+            setSeasonList([
+              {
+                value: 1,
+                label: "第1季度",
+              },
+              {
+                value: 2,
+                label: "第2季度",
+              },
+              {
+                value: 3,
+                label: "第3季度",
+              },
+              {
+                value: 4,
+                label: "第4季度",
+              },
+            ]);
+          }
+          setResultScore(res.data);
+          setTimeout(() => {
+            if (isSingleSeason) {
+              //单季度
+              scoreForm.setFieldsValue({
+                ...keyResultScoreList[0],
+                targetSeason: targetSeason,
+              });
+            } else {
+              //多季度按照 targetSeason 取对应的数组值
+              scoreForm.setFieldsValue({
+                ...keyResultScoreList[targetSeason - 1],
+                targetSeason: targetSeason,
+              });
+            }
           });
         }
       } else {
@@ -470,7 +522,7 @@ const Home = ({ tree }) => {
   };
   const handleCommentSuccess = (text) => {
     if (text == "success") {
-      getCommentList(people.id);
+      getCommentList(tree.id);
     }
   };
   const deleteDiscuss = (discuss) => {
@@ -478,7 +530,7 @@ const Home = ({ tree }) => {
     _post(`api/comment/${discuss.id}/delete`).then((res) => {
       if (res.success) {
         message.success("评论删除成功");
-        getCommentList(people.id);
+        getCommentList(tree.id);
       } else {
         message.error(res.message);
       }
@@ -709,9 +761,9 @@ const Home = ({ tree }) => {
   const getAlignTitile = (alignat) => {
     return (
       <div className="alignTitle-warp">
-        <Avatar
+        {/* <Avatar
           src={`http://grean-ops.oss-cn-hangzhou.aliyuncs.com/avatar/${alignat.wxUserId}.png`}
-        />
+        /> */}
         <div className="main">
           <p>{alignat.account}</p>
           <p>
@@ -752,10 +804,41 @@ const Home = ({ tree }) => {
   // 导出
   const download = () => {
     _download(
-      `api/objective/list/${people.id}/user/export`,
+      `api/objective/list/${tree.id}/user/export`,
       {},
-      `${people.nickname}绩效`
+      `${tree.name}绩效`
     );
+  };
+  //
+  const gotoSeasonPool = () => {
+    navigate({
+      pathname: "/seasonPool",
+      search: `?id=${tree.id}&name=${tree.name}&year=${year}`,
+    });
+  };
+  // 年份筛选
+  const handleYearChange = (value) => {
+    setYear(value);
+  };
+  // const handleSeasonChange = (value) => {
+  //   setSeason(value);
+  // };
+  // 季度变换
+  const handleSeasonChange = (value) => {
+    if (!resultScore.isSingleSeason) {
+      let res = resultScore.keyResultScoreList[value - 1];
+      console.log(res);
+      if (res) {
+        scoreForm.setFieldsValue({
+          ...resultScore.keyResultScoreList[value - 1],
+        });
+      } else {
+        scoreForm.setFieldsValue({
+          score: undefined,
+          scoreDescription: undefined,
+        });
+      }
+    }
   };
 
   return (
@@ -766,17 +849,72 @@ const Home = ({ tree }) => {
         </Sider>
         <Layout>
           <Content className="home-main">
-            <Header className="bg-white" style={{ padding: "0" }}>
+            <Header className="bg-white header" style={{ padding: "0" }}>
               <div className="user-item">
                 {/* <Avatar size={34} style={{ backgroundColor: '#7265e6', verticalAlign: 'middle' }}>{people.nickname}</Avatar> */}
                 <span style={{ marginLeft: "8px", fontSize: "22px" }}>
-                  {people?.dept_1}-{people?.dept_2}
-                  {people?.dept_2 ? "-" : ""}
-                  {people.nickname}
+                  {tree.name ?? "--"}
                 </span>
                 <Button type="link" onClick={download}>
                   导出
                 </Button>
+                <Button type="link" onClick={gotoSeasonPool}>
+                  季度汇总
+                </Button>
+              </div>
+              <div>
+                <Space>
+                  <Select
+                    defaultValue={nowYear}
+                    style={{
+                      width: 120,
+                    }}
+                    onChange={handleYearChange}
+                    options={[
+                      {
+                        value: nowYear + 1,
+                        label: nowYear + 1 + "年",
+                      },
+                      {
+                        value: nowYear,
+                        label: nowYear + "年",
+                      },
+                      {
+                        value: nowYear - 1,
+                        label: nowYear - 1 + "年",
+                      },
+                    ]}
+                  />
+                  {/* <Select
+                    defaultValue={""}
+                    style={{
+                      width: 120,
+                    }}
+                    onChange={handleSeasonChange}
+                    options={[
+                      {
+                        value: "",
+                        label: "全部",
+                      },
+                      {
+                        value: 1,
+                        label: "第一季度",
+                      },
+                      {
+                        value: 2,
+                        label: "第二季度",
+                      },
+                      {
+                        value: 3,
+                        label: "第三季度",
+                      },
+                      {
+                        value: 4,
+                        label: "第四季度",
+                      },
+                    ]}
+                  /> */}
+                </Space>
               </div>
             </Header>
             {!!objective?.objectiveVOList.length ? (
@@ -789,52 +927,7 @@ const Home = ({ tree }) => {
                           title={
                             <div className="okr-title-wrap">
                               <div className="okr-title-left-wrap">
-                                <p className="okr-title-test zhehang">
-                                  <span>对齐目标: </span>
-
-                                  {item?.objectiveAlignTo.map(
-                                    (jtem, jdx, ary) => {
-                                      return (
-                                        <Popover
-                                          key={jdx}
-                                          overlayStyle={popoverlayStyle}
-                                          placement="bottomLeft"
-                                          title={() =>
-                                            getAlignTitile(jtem.user)
-                                          }
-                                          content={() =>
-                                            getAlignAtDetail(
-                                              item.objective.id,
-                                              jtem,
-                                              true
-                                            )
-                                          }
-                                          trigger="hover"
-                                        >
-                                          <span className="cursor-pointer">
-                                            {jtem.user.nickname}
-                                            {jtem.count > 1
-                                              ? `(${jtem.count})`
-                                              : ""}
-                                          </span>
-                                          {jdx !== ary.length - 1 ? ",  " : ""}
-                                        </Popover>
-                                      );
-                                    }
-                                  )}
-                                  {
-                                    // 权限
-                                    objective.isMe ? (
-                                      <Button
-                                        type="link"
-                                        style={{ fontSize: "14px" }}
-                                        onClick={() => handleAlign(item)}
-                                      >
-                                        + 添加对齐
-                                      </Button>
-                                    ) : null
-                                  }
-                                </p>
+                                <p className="okr-title-test zhehang"></p>
 
                                 <div className="obj-content-main">
                                   {
@@ -924,8 +1017,8 @@ const Home = ({ tree }) => {
                               <div className="okr-title-right-wrap">
                                 <div className="okr-title-right">
                                   {/* <div>
-                                    <p className='okr-title-test'>关注我的</p>
-                                  </div> */}
+                                  <p className='okr-title-test'>关注我的</p>
+                                </div> */}
                                   <div>
                                     <p className="okr-title-test text-align-r ">
                                       进度
@@ -956,9 +1049,10 @@ const Home = ({ tree }) => {
                                   <div>
                                     <p className="okr-title-test">总分</p>
                                     <p>
-                                      {item.objective.score
+                                      --
+                                      {/* {item.objective.score
                                         ? item.objective.score
-                                        : "0.0"}
+                                        : "0.0"} */}
                                     </p>
                                   </div>
                                   <div>
@@ -1039,24 +1133,6 @@ const Home = ({ tree }) => {
                                       <List.Item.Meta
                                         avatar={
                                           <Space align="center">
-                                            <Tooltip
-                                              placement="topLeft"
-                                              title={getStarPeople(jtem)}
-                                            >
-                                              <div className="flex-col">
-                                                <Rate
-                                                  disabled={objective.isMe}
-                                                  count={1}
-                                                  onChange={(eve) =>
-                                                    handleKRstar(eve, jtem)
-                                                  }
-                                                  value={getDefalSter(jtem)}
-                                                />
-                                                <span>
-                                                  {jtem.followerList.length}
-                                                </span>
-                                              </div>
-                                            </Tooltip>
                                             <Tag color="blue">
                                               KR{jndex + 1}
                                             </Tag>
@@ -1445,7 +1521,7 @@ const Home = ({ tree }) => {
                       // avatar={<Avatar src={`http://grean-ops.oss-cn-hangzhou.aliyuncs.com/avatar/${item.commentUserId}.png`} />}
                       avatar={
                         <Avatar
-                          src={`http://grean-ops.oss-cn-hangzhou.aliyuncs.com/avatar/${item.userAvatar.wxUserId}.png`}
+                          // src={`http://grean-ops.oss-cn-hangzhou.aliyuncs.com/avatar/${item.userAvatar.wxUserId}.png`}
                           size="large"
                           alt="Han Solo"
                         />
@@ -1471,10 +1547,7 @@ const Home = ({ tree }) => {
               />
             ) : null}
 
-            <MyCmment
-              people={people}
-              callback={handleCommentSuccess}
-            ></MyCmment>
+            <MyCmment people={tree} callback={handleCommentSuccess}></MyCmment>
           </Content>
 
           <Content style={{ paddingTop: "0px", background: "#f5f6f7" }}>
@@ -1501,8 +1574,37 @@ const Home = ({ tree }) => {
             name="form_in_modal"
             initialValues={{
               modifier: "public",
+              dataYear: nowYear,
             }}
           >
+            <Form.Item
+              name="dataYear"
+              label="考核年份"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: nowYear - 1,
+                    label: nowYear - 1 + "年",
+                  },
+                  {
+                    value: nowYear,
+                    label: nowYear + "年",
+                  },
+                  {
+                    value: nowYear + 1,
+                    label: nowYear + 1 + "年",
+                  },
+                ]}
+                optionType="button"
+                buttonStyle="solid"
+              />
+            </Form.Item>
             <Form.Item
               name="content"
               label="目标内容"
@@ -1568,6 +1670,7 @@ const Home = ({ tree }) => {
             name="kr"
             initialValues={{
               modifier: "public",
+              isSingleSeason: true,
             }}
           >
             <Form.Item
@@ -1582,6 +1685,30 @@ const Home = ({ tree }) => {
             >
               {/* <TextArea showCount maxLength={100} style={{ height: 120 }} /> */}
               <MyMention />
+            </Form.Item>
+            <Form.Item
+              name="isSingleSeason"
+              label="季度考核"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Radio.Group
+                options={[
+                  {
+                    value: true,
+                    label: "单季度考核",
+                  },
+                  {
+                    value: false,
+                    label: "每季度考核",
+                  },
+                ]}
+                optionType="button"
+                buttonStyle="solid"
+              />
             </Form.Item>
             <Form.Item
               name="deadline"
@@ -1747,6 +1874,21 @@ const Home = ({ tree }) => {
               modifier: "public",
             }}
           >
+            <Form.Item
+              name="targetSeason"
+              label="考核季度"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Select
+                options={seasonList}
+                style={{ width: "200px" }}
+                onChange={handleSeasonChange}
+              />
+            </Form.Item>
             <Form.Item
               name="score"
               label="打分"

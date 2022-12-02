@@ -7,7 +7,7 @@
   height: 100%;
 }
 .bg-white {
-  background-color: @huise;
+  background-color: @huise !important;
 }
 
 .home-main {
@@ -16,6 +16,10 @@
   min-height: 500px;
   height: calc(100vh - 50px);
   overflow-y: auto;
+  .header {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 // okr主要
 .site-card-wrapper {

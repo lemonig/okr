@@ -153,12 +153,6 @@ const Header = ({ message }) => {
             目标
           </div>
           <div
-            className={`tab-item ${nowPage === "matrix" ? "active" : ""}`}
-            onClick={gotoMatrix}
-          >
-            联结矩阵
-          </div>
-          <div
             className={`tab-item ${nowPage === "notification" ? "active" : ""}`}
             onClick={gotoNotice}
           >

@@ -10,6 +10,7 @@ const LoginToHome = React.lazy(() => import("../apps/pages/loginToHome"));
 const CommentList = React.lazy(() => import("../apps/pages/commentList"));
 const CommentDetail = React.lazy(() => import("../apps/pages/commentDetail"));
 const Matrix = React.lazy(() => import("../apps/pages/matrix"));
+const SeasonPool = React.lazy(() => import("../apps/pages/seasonPool"));
 // const Notification = React.lazy(() => import("../apps/pages/notification"));
 
 // import BodyLayout from '../apps/layout/lay-body';
@@ -59,6 +60,14 @@ const config = [
         index: true,
       },
       {
+        path: "seasonPool",
+        element: (
+          <React.Suspense fallback={<>...</>}>
+            <SeasonPool />,
+          </React.Suspense>
+        ),
+      },
+      {
         path: "comment",
         element: (
           <React.Suspense fallback={<>...</>}>
@@ -77,14 +86,7 @@ const config = [
       //     }
       //   ]
       // },
-      {
-        path: "matrix",
-        element: (
-          <React.Suspense fallback={<>...</>}>
-            <Matrix />,
-          </React.Suspense>
-        ),
-      },
+
       {
         path: "notification",
         element: <Notification />,
