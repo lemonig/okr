@@ -81,6 +81,12 @@ function SeasonPool() {
       width: 100,
     },
     {
+      title: "截止日期",
+      dataIndex: "deadline",
+      key: "deadline",
+      width: 200,
+    },
+    {
       title: "第一季度",
       dataIndex: "season1",
       key: "season1",

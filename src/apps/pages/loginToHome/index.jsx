@@ -17,7 +17,7 @@ const LoginToHomen = () => {
     let url = decodeURI(search);
 
     //
-    let code = url.split("&")[0].split("=")[1];
+    let code = url.split("&")[1].split("=")[1];
     console.log(code);
     getTicket(code);
 

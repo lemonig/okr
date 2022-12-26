@@ -106,4 +106,5 @@ const config = [
     element: <Login />,
   },
 ];
+console.log(config);
 export default config;
