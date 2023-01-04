@@ -42,7 +42,6 @@ function ListTree({ tree, onRef }) {
   const [selectedNode, setSelectedNode] = useState([]);
 
   useEffect(() => {
-    console.log("treeMOUntbianhua---", tree);
     getPageData();
   }, []);
   const getPageData = () => {

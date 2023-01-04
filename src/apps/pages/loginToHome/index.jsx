@@ -18,7 +18,6 @@ const LoginToHomen = () => {
 
     //
     let code = url.split("&")[1].split("=")[1];
-    console.log(code);
     getTicket(code);
 
     window.onhashchange = function (event) {};

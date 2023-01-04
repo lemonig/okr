@@ -57,10 +57,8 @@ const { Header, Sider, Content } = Layout;
 const { TextArea } = Input;
 const { confirm } = Modal;
 const myself = JSON.parse(localStorage.getItem("user"));
-console.log(myself);
 let TreeListRef = React.createRef();
 let nowYear = moment().get("year");
-console.log(nowYear);
 const Home = ({ tree }) => {
   let navigate = useNavigate();
   const [objective, setObjective] = useState(null); //objective
@@ -95,13 +93,12 @@ const Home = ({ tree }) => {
   // console.log(location);
   // 展开折叠
   const [collapse, setCollapse] = useState([]);
-  console.log("home=----------", tree);
   // 6.23加入打分操作
   const [scoreVis, setScoreVis] = useState(false); // 打分弹窗
   const [scoreForm] = Form.useForm(); //打分表单
   const [tooltipScore, setTooltipScore] = useState("1");
   // 当年年份
-  const [year, setYear] = useState(moment().get("year"));
+  const [year, setYear] = useState(moment().subtract(2,"months").get("year"));
   // const [season, setSeason] = useState("");
   const [resultScore, setResultScore] = useState({}); //打分数据
   const [seasonList, setSeasonList] = useState([]);
@@ -387,7 +384,6 @@ const Home = ({ tree }) => {
   };
   // 打分
   const handleEditKrScore = (obj, flag) => {
-    console.log(obj);
     _post(`api/key_result/${obj.id}`).then((res) => {
       if (res.success) {
         if (flag) {
@@ -451,7 +447,6 @@ const Home = ({ tree }) => {
     setScoreVis(true);
   };
   const handleToolTip = (vis, kr) => {
-    console.log(vis);
     if (vis) {
       _post(`api/key_result/${kr.id}`).then((res) => {
         if (res.success) {
@@ -468,8 +463,6 @@ const Home = ({ tree }) => {
 
   const handleScoreOK = () => {
     let params = scoreForm.getFieldsValue();
-    console.log(krEdit);
-    console.log(params);
     params.id = krEdit.id;
     scoreForm.validateFields().then((value) => {
       _post(`api/key_result/update/score`, params).then((res) => {
@@ -483,7 +476,6 @@ const Home = ({ tree }) => {
         }
       });
     });
-    console.log(params);
   };
 
   const handleKRstar = (value, kr) => {
@@ -827,7 +819,6 @@ const Home = ({ tree }) => {
   const handleSeasonChange = (value) => {
     if (!resultScore.isSingleSeason) {
       let res = resultScore.keyResultScoreList[value - 1];
-      console.log(res);
       if (res) {
         scoreForm.setFieldsValue({
           ...resultScore.keyResultScoreList[value - 1],
@@ -865,7 +856,7 @@ const Home = ({ tree }) => {
               <div>
                 <Space>
                   <Select
-                    defaultValue={nowYear}
+                    defaultValue={moment().subtract(2, "months").get("year")}
                     style={{
                       width: 120,
                     }}

@@ -27,7 +27,6 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
-    console.log(response);
     store.dispatch(actions.shiftLoading());
     if (response.data && response.status === 200) {
       if (response.data.code === 401) {
@@ -41,7 +40,6 @@ axios.interceptors.response.use(
   },
 
   (error) => {
-    console.log(error);
     store.dispatch(actions.shiftLoading());
     if (error.response.status) {
       switch (error.response.status) {
