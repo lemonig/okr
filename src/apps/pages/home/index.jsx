@@ -52,6 +52,9 @@ import { connect } from "react-redux";
 import ListTreeOkr from "../../shared/listTreeOkr";
 import { Transition, animated } from "react-spring";
 import IconFont from "../../shared/IconFont";
+// 2023.3/22绩效份三块
+import PartTwo from "./components/PartTwo";
+import PartThird from "./components/PartThird";
 
 const { Header, Sider, Content } = Layout;
 const { TextArea } = Input;
@@ -98,7 +101,7 @@ const Home = ({ tree }) => {
   const [scoreForm] = Form.useForm(); //打分表单
   const [tooltipScore, setTooltipScore] = useState("1");
   // 当年年份
-  const [year, setYear] = useState(moment().subtract(2,"months").get("year"));
+  const [year, setYear] = useState(moment().subtract(2, "months").get("year"));
   // const [season, setSeason] = useState("");
   const [resultScore, setResultScore] = useState({}); //打分数据
   const [seasonList, setSeasonList] = useState([]);
@@ -116,9 +119,11 @@ const Home = ({ tree }) => {
 
   // 获取页面数据
   const getPageData = () => {
-    _post(`api/objective/list/${tree.id}/dept?year=${year}`).then((res) => {
-      setObjective(res.data);
-    });
+    _post(`api/objective/list/${tree.id}/dept?year=${year}&org=dept`).then(
+      (res) => {
+        setObjective(res.data);
+      }
+    );
   };
   // 评论数
   const msgConut = () => {
@@ -132,20 +137,22 @@ const Home = ({ tree }) => {
   const selectMan = (id) => {
     // 获取数据
 
-    _post(`api/objective/list/${id}/dept?year=${year}`).then((res) => {
-      // 3.17处理关注的人O 显示颜色变换
-      // for (let i of res.data.objectiveVOList) {
-      //   for (let j of i.keyResultList) {
-      //     for (let k of j.followerList) {
-      //       if (k.id == myself.userId) {
-      //         i.myFavirite = true;
-      //       }
-      //     }
-      //   }
-      // }
-      setObjective(res.data);
-      // getCommentList(res.data.user.id);
-    });
+    _post(`api/objective/list/${id}/dept?year=${year}&org=dept`, {}).then(
+      (res) => {
+        // 3.17处理关注的人O 显示颜色变换
+        // for (let i of res.data.objectiveVOList) {
+        //   for (let j of i.keyResultList) {
+        //     for (let k of j.followerList) {
+        //       if (k.id == myself.userId) {
+        //         i.myFavirite = true;
+        //       }
+        //     }
+        //   }
+        // }
+        setObjective(res.data);
+        // getCommentList(res.data.user.id);
+      }
+    );
     setLoading(false);
     setCollapse([]);
   };
@@ -796,7 +803,7 @@ const Home = ({ tree }) => {
   // 导出
   const download = () => {
     _download(
-      `api/objective/list/${tree.id}/user/export`,
+      `api/objective/list/${tree.id}/dept/export?year=${year}`,
       {},
       `${tree.name}绩效`
     );
@@ -838,45 +845,44 @@ const Home = ({ tree }) => {
         <Sider theme="light" width={300} className="bg-white tree-list-side">
           <ListTree onRef={TreeListRef} />
         </Sider>
-        <Layout>
-          <Content className="home-main">
-            <Header className="bg-white header" style={{ padding: "0" }}>
-              <div className="user-item">
-                {/* <Avatar size={34} style={{ backgroundColor: '#7265e6', verticalAlign: 'middle' }}>{people.nickname}</Avatar> */}
-                <span style={{ marginLeft: "8px", fontSize: "22px" }}>
-                  {tree.name ?? "--"}
-                </span>
-                <Button type="link" onClick={download}>
-                  导出
-                </Button>
-                <Button type="link" onClick={gotoSeasonPool}>
-                  季度汇总
-                </Button>
-              </div>
-              <div>
-                <Space>
-                  <Select
-                    defaultValue={moment().subtract(2, "months").get("year")}
-                    style={{
-                      width: 120,
-                    }}
-                    onChange={handleYearChange}
-                    options={[
-                      {
-                        value: nowYear + 1,
-                        label: nowYear + 1 + "年",
-                      },
-                      {
-                        value: nowYear,
-                        label: nowYear + "年",
-                      },
-                      {
-                        value: nowYear - 1,
-                        label: nowYear - 1 + "年",
-                      },
-                    ]}
-                  />
-                  {/* <Select
+        <Layout className="home-layout">
+          <Header className="bg-white header" style={{ padding: "0" }}>
+            <div className="user-item">
+              {/* <Avatar size={34} style={{ backgroundColor: '#7265e6', verticalAlign: 'middle' }}>{people.nickname}</Avatar> */}
+              <span style={{ marginLeft: "8px", fontSize: "22px" }}>
+                {tree.name ?? "--"}
+              </span>
+              <Button type="link" onClick={download}>
+                导出
+              </Button>
+              <Button type="link" onClick={gotoSeasonPool}>
+                季度汇总
+              </Button>
+            </div>
+            <div>
+              <Space>
+                <Select
+                  defaultValue={moment().subtract(2, "months").get("year")}
+                  style={{
+                    width: 120,
+                  }}
+                  onChange={handleYearChange}
+                  options={[
+                    {
+                      value: nowYear + 1,
+                      label: nowYear + 1 + "年",
+                    },
+                    {
+                      value: nowYear,
+                      label: nowYear + "年",
+                    },
+                    {
+                      value: nowYear - 1,
+                      label: nowYear - 1 + "年",
+                    },
+                  ]}
+                />
+                {/* <Select
                     defaultValue={""}
                     style={{
                       width: 120,
@@ -905,9 +911,11 @@ const Home = ({ tree }) => {
                       },
                     ]}
                   /> */}
-                </Space>
-              </div>
-            </Header>
+              </Space>
+            </div>
+          </Header>
+          <div className="part-title">第一部分 部门绩效任务目标</div>
+          <Content className="home-main">
             {!!objective?.objectiveVOList.length ? (
               objective?.objectiveVOList?.map((item, index) => {
                 return (
@@ -1475,6 +1483,17 @@ const Home = ({ tree }) => {
                 </Button>
               </div>
             ) : null}
+
+            {/* 2023.3.22 绩效分三块 */}
+            <div className="part-title">第二部分 部门通用绩效</div>
+            {tree.id && year ? (
+              <PartTwo tree={tree} year={year}></PartTwo>
+            ) : null}
+            <div className="part-title">
+              第三部分 管理者个人能力提升计划（加分考核项）
+            </div>
+            {tree.id && year ? <PartThird tree={tree} year={year} /> : null}
+
             {/* 评论 */}
             <h2
               style={{

@@ -27,7 +27,7 @@ const LoginToHomen = () => {
       ticket,
     });
     if (code == 200) {
-      // localStorage.setItem("token", "aa005728dbfe844b6bba5dc872e8e82eb");
+      // localStorage.setItem("token", "a41a00404e1554651b72cd774f6adf1ca");
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data));
       store.dispatch(treeActions.selectPeople(data.userId));

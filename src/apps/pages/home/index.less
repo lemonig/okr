@@ -9,17 +9,24 @@
 .bg-white {
   background-color: @huise !important;
 }
-
-.home-main {
+.part-title {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 0;
+}
+.home-layout {
   padding: 10px 20px;
-  background-color: @huise !important;
-  min-height: 500px;
-  height: calc(100vh - 50px);
   overflow-y: auto;
+  // height: calc(100vh - 50px);
+  background-color: @huise !important;
   .header {
     display: flex;
     justify-content: space-between;
   }
+}
+
+.home-main {
+  min-height: 500px;
 }
 // okr主要
 .site-card-wrapper {
