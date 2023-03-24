@@ -138,7 +138,7 @@ function PartThird({ tree, year }) {
       cancelText: "取消",
       onOk: async () => {
         let { success, message: msg } = await _post(
-          `/api//skill/${record.id}/delete`
+          `/api/skill/${record.id}/delete`
         );
         if (success) {
           message.success("删除成功");
