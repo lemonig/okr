@@ -48,7 +48,7 @@ axios.interceptors.response.use(
         case 403:
           message.error("403");
           localStorage.removeItem("token");
-          setTimeout(() => {}, 1000);
+          setTimeout(() => { }, 1000);
           break;
         case 404:
           message.error("404");
@@ -105,11 +105,15 @@ export const _get = (url, params) => {
  * @returns {Promise<unknown>}
  * @private
  */
-export const _post = (url, params) => {
+export const _post = (url, params, headers = {
+  'Content-Type': "application/json; charset=utf-8",
+  "X-Requested-With": "XMLHttpRequest",
+}) => {
   return new Promise((rlv, rej) => {
     axios
-      .post(url, params, {})
+      .post(url, params, { headers })
       .then((res) => {
+        console.log(res);
         rlv(res.data);
       })
       .catch((err) => {

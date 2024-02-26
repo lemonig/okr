@@ -13,7 +13,9 @@ const webpackBundleAnalyzer =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const compressionWebpackPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const path = require("path");
 const isPro = (dev) => dev === "production";
+const pathResolve = (pathUrl) => path.join(__dirname, pathUrl);
 
 module.exports = {
   plugins: [
@@ -80,6 +82,17 @@ module.exports = {
       webpackConfig.externals = {};
       console.log("环境：", env, paths);
       return webpackConfig;
+    },
+    alias: {
+      "@Shared": pathResolve("src/apps/shared"),
+      "@": pathResolve("src"),
+      "@Pages": pathResolve("src/apps/pages"),
+      "@Utils": pathResolve("src/apps/utils"),
+      "@Store": pathResolve("src/store"),
+      "@Styles": pathResolve("src/styles"),
+      "@App": pathResolve("src/apps"),
+      "@Server": pathResolve("src/apps/server"),
+      "@Api": pathResolve("src/apps/api"),
     },
   },
 };
