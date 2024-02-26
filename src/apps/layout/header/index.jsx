@@ -18,7 +18,15 @@ import { connect } from "react-redux";
 const Header = ({ message }) => {
   const [fullOrno, setfullOrno] = useState(true);
   const [nowPage, setNowPage] = useState(""); //aim matrix
+  const [isAdmin, setIsAdmin] = useState(false);
+
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log(user);
+    if (user) {
+      setIsAdmin(user.isAdmin);
+    }
+
     let url = window.location.pathname.substring(1);
     if (!!url) {
       setNowPage("matrix");
@@ -135,6 +143,11 @@ const Header = ({ message }) => {
     navigate("/notification");
   };
 
+  const gotoPage = (page) => {
+    setNowPage(page);
+    navigate(`/${page}`);
+  };
+
   return (
     <>
       <div className="page-title">
@@ -154,9 +167,25 @@ const Header = ({ message }) => {
           </div>
           <div
             className={`tab-item ${nowPage === "notification" ? "active" : ""}`}
-            onClick={gotoNotice}
+            onClick={() => gotoPage("notification")}
           >
             通知公告
+          </div>
+          <div
+            style={{ display: isAdmin ? "block" : "none" }}
+            className={`tab-item ${nowPage === "userManager" ? "active" : ""}`}
+            onClick={() => gotoPage("userManager")}
+          >
+            用户管理
+          </div>
+          <div
+            style={{ display: isAdmin ? "block" : "none" }}
+            className={`tab-item ${
+              nowPage === "apartmentManager" ? "active" : ""
+            }`}
+            onClick={() => gotoPage("apartmentManager")}
+          >
+            部门管理
           </div>
         </div>
 
