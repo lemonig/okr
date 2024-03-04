@@ -13,6 +13,8 @@ const Matrix = React.lazy(() => import("../apps/pages/matrix"));
 const SeasonPool = React.lazy(() => import("../apps/pages/seasonPool"));
 const ApartManager = React.lazy(() => import("../apps/pages/ApartManager"));
 const UserManager = React.lazy(() => import("../apps/pages/UserManager"));
+const CompanyOkr = React.lazy(() => import("../apps/pages/CompanyOkr"));
+
 // const Notification = React.lazy(() => import("../apps/pages/notification"));
 
 // import BodyLayout from '../apps/layout/lay-body';
@@ -100,6 +102,10 @@ const config = [
       {
         path: "userManager",
         element: <UserManager />,
+      },
+      {
+        path: "companyOkr",
+        element: <CompanyOkr />,
       },
       {
         path: "commentDetail",

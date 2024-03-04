@@ -134,14 +134,6 @@ const Header = ({ message }) => {
     setNowPage("aim");
     navigate("/");
   };
-  const gotoMatrix = () => {
-    setNowPage("matrix");
-    navigate("/matrix");
-  };
-  const gotoNotice = () => {
-    setNowPage("notification");
-    navigate("/notification");
-  };
 
   const gotoPage = (page) => {
     setNowPage(page);
@@ -186,6 +178,13 @@ const Header = ({ message }) => {
             onClick={() => gotoPage("apartmentManager")}
           >
             部门管理
+          </div>
+          <div
+            style={{ display: isAdmin ? "block" : "none" }}
+            className={`tab-item ${nowPage === "companyOkr" ? "active" : ""}`}
+            onClick={() => gotoPage("companyOkr")}
+          >
+            公司绩效
           </div>
         </div>
 

@@ -84,6 +84,7 @@ module.exports = {
       return webpackConfig;
     },
     alias: {
+      "@Components": pathResolve("src/apps/components"),
       "@Shared": pathResolve("src/apps/shared"),
       "@": pathResolve("src"),
       "@Pages": pathResolve("src/apps/pages"),

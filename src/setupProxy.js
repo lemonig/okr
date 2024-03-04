@@ -4,7 +4,7 @@ module.exports = function (app) {
   app.use(
     "/api", // 指定需要转发的请求
     createProxyMiddleware({
-      target: "http://192.168.188.50:3429", //服务器的地址
+      target: "http://192.168.188.6:13429", //服务器的地址
       // target: "https://portal.greandata1.com/", //服务器的地址
       changeOrigin: true,
       // pathRewrite(path) {

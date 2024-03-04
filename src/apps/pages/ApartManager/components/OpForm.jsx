@@ -27,7 +27,9 @@ function OpForm({ record, open, closeModal }) {
 
   useEffect(() => {
     getMetaData();
-    getFormData();
+    if (record) {
+      getFormData();
+    }
   }, []);
 
   const getMetaData = async () => {
@@ -98,6 +100,9 @@ function OpForm({ record, open, closeModal }) {
           autoComplete="off"
           form={form}
           colon={false}
+          initialValues={{
+            isDelete: true,
+          }}
         >
           <Form.Item
             label="部门"
